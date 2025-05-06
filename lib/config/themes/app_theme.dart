@@ -1,10 +1,13 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+@immutable
 class AppTheme {
   const AppTheme._();
+
   static final light = FlexThemeData.light(
-    scheme: FlexScheme.blueWhale,
+    scheme: FlexScheme.hippieBlue,
     surfaceMode: FlexSurfaceMode.highScaffoldLowSurfacesVariantDialog,
     blendLevel: 40,
     appBarStyle: FlexAppBarStyle.primary,
