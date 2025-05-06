@@ -62,6 +62,11 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
             ),
             const Spacer(),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colors.primary,
+                foregroundColor: colors.onPrimary,
+                padding: const EdgeInsets.all(8.0),
+              ),
               onPressed: _createTodo,
               child: const Padding(
                 padding: EdgeInsets.all(8.0),

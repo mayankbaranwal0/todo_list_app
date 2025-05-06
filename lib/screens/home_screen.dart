@@ -9,40 +9,42 @@ import 'package:todo_list_app/widgets/widgets.dart';
 import '../config/config.dart';
 import '../providers/providers.dart';
 
- class HomeScreen extends ConsumerWidget {
-   static HomeScreen builder(
-     BuildContext context,
-     GoRouterState state,
-   ) =>
-       const HomeScreen();
-   const HomeScreen({super.key});
+class HomeScreen extends ConsumerWidget {
+  static HomeScreen builder(BuildContext context, GoRouterState state) =>
+      const HomeScreen();
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colorScheme;
     final deviceSize = context.deviceSize;
-     final todos = ref.watch(todosProvider);
-     final date = ref.watch(dateProvider);
-     final completedTodos = ref.watch(completedTodosProvider);
+    final todos = ref.watch(todosProvider);
+    final date = ref.watch(dateProvider);
+    final completedTodos = ref.watch(completedTodosProvider);
 
     return Scaffold(
       body: Stack(
         children: [
           Column(
             children: [
-              AppBackground(
-                headerHeight: deviceSize.height * 0.3,
-                header: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Gap(60),
-                    AppTextWhite(
-                      text: DateFormat.yMMMd().format(date),
-                      fontSize: 20,
-                      fontWeight: FontWeight.normal,
-                    ),
-                    const AppTextWhite(text: 'My To-Do List', fontSize: 40),
-                  ],
+              SizedBox(
+                height: deviceSize.height * 0.3,
+                child: AppBackground(
+                  headerHeight: deviceSize.height * 0.3,
+                  header: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () => Helpers.selectDate(context, ref),
+                        child: AppTextWhite(
+                          text: DateFormat.yMMMd().format(date),
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      const AppTextWhite(text: 'My To-Do List', fontSize: 40),
+                    ],
+                  ),
                 ),
               ),
             ],
