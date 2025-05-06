@@ -1,15 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_list_app/utils/utils.dart';
 
+import '../config/config.dart';
+import '../data/data.dart';
+import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 
-class AddTodoScreen extends StatelessWidget {
+class AddTodoScreen extends ConsumerStatefulWidget {
   static AddTodoScreen builder(BuildContext context, GoRouterState state) =>
       const AddTodoScreen();
   const AddTodoScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _AddTodoScreenState();
+}
+
+class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,49 +44,25 @@ class AddTodoScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const CommonTextField(
+            CommonTextField(
               hintText: 'To-Do Title',
               title: 'To-Do Title',
+              controller: _titleController,
             ),
             const Gap(30),
             const CategorySelectionWidget(),
             const Gap(30),
-            Row(
-              children: [
-                Expanded(
-                  child: CommonTextField(
-                    hintText: 'Date',
-                    title: 'Date',
-                    readOnly: true,
-                    suffixIcon: IconButton(
-                      onPressed: () {},
-                      icon: const FaIcon(FontAwesomeIcons.calendar),
-                    ),
-                  ),
-                ),
-                const Gap(10),
-                Expanded(
-                  child: CommonTextField(
-                    hintText: 'Time',
-                    title: 'Time',
-                    readOnly: true,
-                    suffixIcon: IconButton(
-                      onPressed: () {},
-                      icon: const FaIcon(FontAwesomeIcons.clock),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            const DateTimeSelectionWidget(),
             const Gap(30),
-            const CommonTextField(
+            CommonTextField(
               hintText: 'Notes',
               title: 'Notes',
               maxLines: 6,
+              controller: _noteController,
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: _createTodo,
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: AppTextWhite(text: 'Save'),
@@ -78,5 +73,30 @@ class AddTodoScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _createTodo() async {
+    final title = _titleController.text.trim();
+    final note = _noteController.text.trim();
+    final time = ref.watch(timeProvider);
+    final date = ref.watch(dateProvider);
+    final category = ref.watch(categoryProvider);
+    if (title.isNotEmpty) {
+      final todo = Todo(
+        title: title,
+        category: category,
+        time: Helpers.timeToString(time),
+        date: DateFormat.yMMMd().format(date),
+        note: note,
+        isCompleted: false,
+      );
+
+      await ref.read(addTodoProvider(todo).future);
+      if (!mounted) return;
+      Helpers.displaySnackbar(context, 'To-Do added successfully');
+      context.go(RouteLocation.home);
+    } else {
+      Helpers.displaySnackbar(context, 'Title cannot be empty');
+    }
   }
 }

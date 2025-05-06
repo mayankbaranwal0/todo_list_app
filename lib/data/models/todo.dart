@@ -3,24 +3,50 @@ import 'package:equatable/equatable.dart';
 import '../../utils/utils.dart';
 
 class Todo extends Equatable {
-  final int id;
+  final int? id;
   final String title;
+  final String note;
   final TodoCategory category;
   final String time;
-  final DateTime date;
+  final String date;
   final bool isCompleted;
 
   const Todo({
-    required this.id,
+    this.id,
     required this.title,
+    required this.note,
     required this.category,
     required this.time,
     required this.date,
     required this.isCompleted,
   });
 
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      TodoKeys.id: id,
+      TodoKeys.title: title,
+      TodoKeys.note: note,
+      TodoKeys.category: category.name,
+      TodoKeys.time: time,
+      TodoKeys.date: date,
+      TodoKeys.isCompleted: isCompleted ? 1 : 0,
+    };
+  }
+
+  factory Todo.fromJson(Map<String, dynamic> map) {
+    return Todo(
+      id: map[TodoKeys.id],
+      title: map[TodoKeys.title],
+      note: map[TodoKeys.note],
+      category: TodoCategory.stringToTodoCategory(map[TodoKeys.category]),
+      time: map[TodoKeys.time],
+      date: map[TodoKeys.date],
+      isCompleted: map[TodoKeys.isCompleted] == 1 ? true : false,
+    );
+  }
+
   @override
   List<Object> get props {
-    return [id, title, category, time, date, isCompleted];
+    return [title, note, category, time, date, isCompleted];
   }
 }

@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_list_app/utils/utils.dart';
 import 'package:todo_list_app/widgets/widgets.dart';
 
 import '../config/config.dart';
+import '../providers/providers.dart';
 
-class HomeScreen extends StatelessWidget {
-  static HomeScreen builder(BuildContext context, GoRouterState state) =>
-      const HomeScreen();
-  const HomeScreen({super.key});
+ class HomeScreen extends ConsumerWidget {
+   static HomeScreen builder(
+     BuildContext context,
+     GoRouterState state,
+   ) =>
+       const HomeScreen();
+   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colorScheme;
     final deviceSize = context.deviceSize;
+     final todos = ref.watch(todosProvider);
+     final date = ref.watch(dateProvider);
+     final completedTodos = ref.watch(completedTodosProvider);
 
     return Scaffold(
       body: Stack(
@@ -23,16 +32,16 @@ class HomeScreen extends StatelessWidget {
             children: [
               AppBackground(
                 headerHeight: deviceSize.height * 0.3,
-                header: const Column(
+                header: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Gap(60),
+                    const Gap(60),
                     AppTextWhite(
-                      text: '6 May, 2025',
+                      text: DateFormat.yMMMd().format(date),
                       fontSize: 20,
                       fontWeight: FontWeight.normal,
                     ),
-                    AppTextWhite(text: 'My To-Do List', fontSize: 40),
+                    const AppTextWhite(text: 'My To-Do List', fontSize: 40),
                   ],
                 ),
               ),
@@ -47,7 +56,14 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const TodosList(todos: []),
+                  todos.when(
+                    data: (todos) {
+                      return TodosList(todos: todos);
+                    },
+                    error: (error, _) => const ErrorMsgWidget(),
+                    loading:
+                        () => const Center(child: CircularProgressIndicator()),
+                  ),
                   const Gap(20),
                   Text(
                     'Completed',
@@ -57,6 +73,17 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const Gap(20),
                   const TodosList(todos: [], isCompletedTodos: true),
+                  completedTodos.when(
+                    data: (completedTodos) {
+                      return TodosList(
+                        isCompletedTodos: true,
+                        todos: completedTodos,
+                      );
+                    },
+                    error: (error, _) => const ErrorMsgWidget(),
+                    loading:
+                        () => const Center(child: CircularProgressIndicator()),
+                  ),
                   const Gap(20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(

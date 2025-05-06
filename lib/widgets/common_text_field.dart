@@ -12,7 +12,7 @@ class CommonTextField extends StatelessWidget {
     this.suffixIcon,
     this.readOnly = false,
   });
-  
+
   final TextEditingController? controller;
   final String hintText;
   final String title;
@@ -29,13 +29,15 @@ class CommonTextField extends StatelessWidget {
         const Gap(10),
         TextField(
           readOnly: readOnly,
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
             suffixIcon: suffixIcon,
           ),
           maxLines: maxLines,
-          onChanged: (value) {},
         ),
       ],
     );
