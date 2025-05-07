@@ -31,11 +31,11 @@ class AppAlerts {
     Widget deleteButton = TextButton(
       onPressed: () async {
         context.pop();
-        await ref.read(deleteTodoProvider(todo).future);
+        await ref.read(todosProvider.notifier).deleteTodo(todo);
 
         if (!context.mounted) return;
 
-        AppAlerts.displaySnackbar(context, 'To-Do deleted successfully');
+        displaySnackbar(context, 'To-Do deleted successfully');
         context.pop();
       },
       child: const Text('YES'),

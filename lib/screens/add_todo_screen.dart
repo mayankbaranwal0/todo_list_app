@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:todo_list_app/utils/utils.dart';
 
 import '../config/config.dart';
@@ -39,42 +38,45 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
         backgroundColor: colors.primary,
         title: const AppTextWhite(text: 'Add New To-Do'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            CommonTextField(
-              hintText: 'To-Do Title',
-              title: 'To-Do Title',
-              controller: _titleController,
-            ),
-            const Gap(30),
-            const CategorySelectionWidget(),
-            const Gap(30),
-            const DateTimeSelectionWidget(),
-            const Gap(30),
-            CommonTextField(
-              hintText: 'Notes',
-              title: 'Notes',
-              maxLines: 6,
-              controller: _noteController,
-            ),
-            const Spacer(),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colors.primary,
-                foregroundColor: colors.onPrimary,
-                padding: const EdgeInsets.all(8.0),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              CommonTextField(
+                hintText: 'To-Do Title',
+                title: 'To-Do Title',
+                controller: _titleController,
               ),
-              onPressed: _createTodo,
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: AppTextWhite(text: 'Save'),
+              const Gap(30),
+              const CategorySelectionWidget(),
+              const Gap(30),
+              const DateTimeSelectionWidget(),
+              const Gap(30),
+              CommonTextField(
+                hintText: 'Notes',
+                title: 'Notes',
+                maxLines: 6,
+                controller: _noteController,
               ),
-            ),
-            const Gap(30),
-          ],
+              const Spacer(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.primary,
+                  foregroundColor: colors.onPrimary,
+                  padding: const EdgeInsets.all(8.0),
+                ),
+                onPressed: _createTodo,
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: AppTextWhite(text: 'Save'),
+                ),
+              ),
+              const Gap(30),
+            ],
+          ),
         ),
       ),
     );
@@ -91,13 +93,14 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
         title: title,
         category: category,
         time: Helpers.timeToString(time),
-        date: DateFormat.yMMMd().format(date),
+        date: Helpers.dateFormater(date),
         note: note,
         isCompleted: false,
       );
 
-      await ref.read(addTodoProvider(todo).future);
+      await ref.read(todosProvider.notifier).createTodo(todo);
       if (!mounted) return;
+
       AppAlerts.displaySnackbar(context, 'To-Do added successfully');
       context.go(RouteLocation.home);
     } else {

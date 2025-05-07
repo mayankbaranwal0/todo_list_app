@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 
 import '../providers/providers.dart';
 import '../utils/utils.dart';
@@ -21,7 +20,7 @@ class DateTimeSelectionWidget extends ConsumerWidget {
         Expanded(
           child: CommonTextField(
             title: 'Date',
-            hintText: DateFormat.yMMMd().format(date),
+            hintText: Helpers.dateFormater(date),
             readOnly: true,
             suffixIcon: IconButton(
               onPressed: () => Helpers.selectDate(context, ref),

@@ -1,22 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/data.dart';
-import '../utils/utils.dart';
 import 'providers.dart';
 
-final todosProvider = FutureProvider.autoDispose((ref) async {
+final todosProvider = StateNotifierProvider<TodoNotifier, TodoState>((ref) {
   final repository = ref.watch(todoRepositoryProvider);
-  final date = ref.watch(dateProvider);
-  final allTodos = await repository.getAllTodos();
-  final List<Todo> filteredTodo = [];
-  for (var todo in allTodos) {
-    if (!todo.isCompleted) {
-      final isTodoDay = Helpers.isTodoFromSelectedDate(todo, date);
-      if (isTodoDay) {
-        filteredTodo.add(todo);
-      }
-    }
-  }
-
-  return filteredTodo;
+  return TodoNotifier(repository);
 });

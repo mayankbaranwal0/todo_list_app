@@ -20,32 +20,35 @@ class CategorySelectionWidget extends ConsumerWidget {
         children: [
           Text('Category', style: context.textTheme.titleLarge),
           const Gap(10),
-          ListView.separated(
-            itemCount: categories.length,
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemBuilder: (ctx, index) {
-              final category = categories[index];
+          Expanded(
+            child: ListView.separated(
+              itemCount: categories.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (ctx, index) {
+                final category = categories[index];
 
-              return InkWell(
-                onTap: () {
-                  ref.read(categoryProvider.notifier).state = category;
-                },
-                borderRadius: BorderRadius.circular(30),
-                child: CircularContainer(
-                  color: category.color.withAlpha((0.3 * 255).toInt()),
-                  child: Icon(
-                    category.icon,
-                    color:
-                        selectedCategory == category
-                            ? context.colorScheme.primary
-                            : category.color.withAlpha((0.5 * 255).toInt()),
+                return InkWell(
+                  onTap: () {
+                    ref.read(categoryProvider.notifier).state = category;
+                  },
+                  borderRadius: BorderRadius.circular(30),
+                  child: CircularContainer(
+                    color: category.color.withAlpha((0.3 * 255).toInt()),
+                    borderColor: category.color,
+                    child: Icon(
+                      category.icon,
+                      color:
+                          selectedCategory == category
+                              ? context.colorScheme.primary
+                              : category.color.withAlpha((0.5 * 255).toInt()),
+                    ),
                   ),
-                ),
-              );
-            },
-            separatorBuilder: (context, index) => const Gap(8),
+                );
+              },
+              separatorBuilder: (context, index) => const Gap(8),
+            ),
           ),
         ],
       ),

@@ -23,24 +23,35 @@ class TodoDetails extends StatelessWidget {
             child: Icon(todo.category.icon, color: todo.category.color),
           ),
           const Gap(16),
-          Column(
-            children: [
-              Text(
-                todo.title,
-                style: style.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              Text(todo.time, style: style.titleMedium),
-            ],
+          Text(
+            todo.title,
+            style: style.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
           ),
+          Text(todo.time, style: style.titleMedium),
+          const Gap(16),
+          Visibility(
+            visible: !todo.isCompleted,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('To-Do to be completed by '),
+                Text(todo.date),
+                Icon(Icons.check_box, color: todo.category.color),
+              ],
+            ),
+          ),
+          const Gap(16),
+          Divider(color: todo.category.color, thickness: 1.5),
           const Gap(16),
           Text(
             todo.note.isEmpty
                 ? 'There is no additional note for this To-Do'
                 : todo.note,
             style: context.textTheme.titleMedium,
+            textAlign: TextAlign.center,
           ),
           const Gap(16),
           Visibility(

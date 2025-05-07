@@ -19,17 +19,21 @@ class TodoTile extends StatelessWidget {
     final textDecoration =
         todo.isCompleted ? TextDecoration.lineThrough : TextDecoration.none;
     final fontWeight = todo.isCompleted ? FontWeight.normal : FontWeight.bold;
-    final double opacityValue = todo.isCompleted ? 0.1 : 0.7;
+    final double iconOpacity = todo.isCompleted ? 0.3 : 0.5;
+    final double backgroundOpacity = todo.isCompleted ? 0.1 : 0.3;
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
       child: Row(
         children: [
           CircularContainer(
-            color: todo.category.color.withAlpha((opacityValue * 255).toInt()),
+            borderColor: todo.category.color,
+            color: todo.category.color.withAlpha(
+              (backgroundOpacity * 255).toInt(),
+            ),
             child: Icon(
               todo.category.icon,
-              color: colors.primary.withAlpha((opacityValue * 255).toInt()),
+              color: todo.category.color.withAlpha((iconOpacity * 255).toInt()),
             ),
           ),
           const Gap(16),
@@ -58,11 +62,11 @@ class TodoTile extends StatelessWidget {
             value: todo.isCompleted,
             onChanged: onCompleted,
             checkColor: colors.surface,
-            fillColor: WidgetStateProperty.resolveWith<Color>((
-              Set<WidgetState> states,
-            ) {
-              return colors.primary;
-            }),
+            // fillColor: WidgetStateProperty.resolveWith<Color>((
+            //   Set<WidgetState> states,
+            // ) {
+            //   return colors.primary;
+            // }),
           ),
         ],
       ),

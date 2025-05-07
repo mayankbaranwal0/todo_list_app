@@ -20,11 +20,11 @@ class TodosList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final deviceSize = context.deviceSize;
     final height =
-        isCompletedTodos ? deviceSize.height * 0.20 : deviceSize.height * 0.24;
+        isCompletedTodos ? deviceSize.height * 0.24 : deviceSize.height * 0.28;
     final emptyTodosAlert =
         isCompletedTodos
-            ? 'There is no completed To-Do yet'
-            : 'There is no To-Do yet';
+            ? 'No To-Do completed yet'
+            : 'No pending To-Do yet';
 
     return CommonContainer(
       height: height,
@@ -62,7 +62,13 @@ class TodosList extends ConsumerWidget {
                     child: TodoTile(
                       todo: todo,
                       onCompleted: (value) async {
-                        await ref.read(updateTodoProvider(todo).future);
+                        await ref.read(todosProvider.notifier).updateTodo(todo);
+                        if (!context.mounted) return;
+
+                        AppAlerts.displaySnackbar(context, 
+                           todo.isCompleted
+                               ? 'To-Do is incomplete'
+                               : 'To-Do completed',);
                       },
                     ),
                   );

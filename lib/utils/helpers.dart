@@ -57,4 +57,12 @@ class Helpers {
       return DateTime.now();
     }
   }
+
+  static String dateFormater(DateTime date) {
+    try {
+      return DateFormat.yMMMd().format(date);
+    } catch (e) {
+      return DateFormat.yMMMd().format(DateTime.now());
+    }
+  }
 }

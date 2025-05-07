@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:todo_list_app/utils/utils.dart';
 import 'package:todo_list_app/widgets/widgets.dart';
 
 import '../config/config.dart';
+import '../data/data.dart';
 import '../providers/providers.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -18,9 +18,10 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colorScheme;
     final deviceSize = context.deviceSize;
-    final todos = ref.watch(todosProvider);
     final date = ref.watch(dateProvider);
-    final completedTodos = ref.watch(completedTodosProvider);
+    final todoState = ref.watch(todosProvider);
+    final incompletedTodos = _incompletedTodo(todoState.todos, ref);
+    final completedTodos = _completedTodo(todoState.todos, ref);
 
     return Scaffold(
       body: Stack(
@@ -31,77 +32,95 @@ class HomeScreen extends ConsumerWidget {
                 height: deviceSize.height * 0.3,
                 child: AppBackground(
                   headerHeight: deviceSize.height * 0.3,
-                  header: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: () => Helpers.selectDate(context, ref),
-                        child: AppTextWhite(
-                          text: DateFormat.yMMMd().format(date),
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
+                  header: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () => Helpers.selectDate(context, ref),
+                          child: AppTextWhite(
+                            text: Helpers.dateFormater(date),
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal,
+                          ),
                         ),
-                      ),
-                      const AppTextWhite(text: 'My To-Do List', fontSize: 40),
-                    ],
+                        const AppTextWhite(text: 'My To-Do List', fontSize: 40),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
           Positioned(
-            top: 160,
+            top: 140,
             left: 0,
             right: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  todos.when(
-                    data: (todos) {
-                      return TodosList(todos: todos);
-                    },
-                    error: (error, _) => const ErrorMsgWidget(),
-                    loading:
-                        () => const Center(child: CircularProgressIndicator()),
-                  ),
-                  const Gap(20),
-                  Text(
-                    'Completed',
-                    style: context.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+            child: SafeArea(
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TodosList(todos: incompletedTodos),
+                    const Gap(20),
+                    Text(
+                      'Completed',
+                      style: context.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const Gap(20),
-                  const TodosList(todos: [], isCompletedTodos: true),
-                  completedTodos.when(
-                    data: (completedTodos) {
-                      return TodosList(
-                        isCompletedTodos: true,
-                        todos: completedTodos,
-                      );
-                    },
-                    error: (error, _) => const ErrorMsgWidget(),
-                    loading:
-                        () => const Center(child: CircularProgressIndicator()),
-                  ),
-                  const Gap(20),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colors.primary,
-                      foregroundColor: colors.onPrimary,
-                      padding: const EdgeInsets.all(8.0),
+                    const Gap(20),
+                    TodosList(isCompletedTodos: true, todos: completedTodos),
+                    const Gap(20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
+                        padding: const EdgeInsets.all(8.0),
+                      ),
+                      onPressed: () => context.push(RouteLocation.addTodo),
+                      child: const AppTextWhite(text: 'Add New To-Do'),
                     ),
-                    onPressed: () => context.push(RouteLocation.addTodo),
-                    child: const AppTextWhite(text: 'Add To-Do'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  List<Todo> _incompletedTodo(List<Todo> todos, WidgetRef ref) {
+    final date = ref.watch(dateProvider);
+    final List<Todo> filteredTodo = [];
+
+    for (var todo in todos) {
+      if (!todo.isCompleted) {
+        final isTodoDay = Helpers.isTodoFromSelectedDate(todo, date);
+        if (isTodoDay) {
+          filteredTodo.add(todo);
+        }
+      }
+    }
+    return filteredTodo;
+  }
+
+  List<Todo> _completedTodo(List<Todo> todos, WidgetRef ref) {
+    final date = ref.watch(dateProvider);
+    final List<Todo> filteredTodo = [];
+
+    for (var todo in todos) {
+      if (todo.isCompleted) {
+        final isTodoDay = Helpers.isTodoFromSelectedDate(todo, date);
+        if (isTodoDay) {
+          filteredTodo.add(todo);
+        }
+      }
+    }
+    return filteredTodo;
   }
 }
