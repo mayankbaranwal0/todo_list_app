@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo_list_app/utils/utils.dart';
 import 'package:intl/intl.dart';
 
 import '../data/data.dart';
@@ -24,15 +23,6 @@ class Helpers {
     } catch (e) {
       return '12:00';
     }
-  }
-
-  static displaySnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: context.textTheme.bodyMedium),
-        backgroundColor: context.colorScheme.onSecondary,
-      ),
-    );
   }
 
   static void selectDate(BuildContext context, WidgetRef ref) async {

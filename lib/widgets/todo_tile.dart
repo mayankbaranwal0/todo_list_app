@@ -2,20 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:todo_list_app/utils/utils.dart';
 
-class TodoTile extends StatelessWidget {
-  const TodoTile({
-    super.key,
-    required this.category,
-    required this.title,
-    required this.time,
-    required this.isCompleted,
-    this.onCompleted,
-  });
+import '../data/data.dart';
+import 'widgets.dart';
 
-  final TodoCategory category;
-  final String title;
-  final String time;
-  final bool isCompleted;
+class TodoTile extends StatelessWidget {
+  const TodoTile({super.key, required this.todo, this.onCompleted});
+
+  final Todo todo;
   final Function(bool?)? onCompleted;
 
   @override
@@ -24,25 +17,19 @@ class TodoTile extends StatelessWidget {
     final colors = context.colorScheme;
 
     final textDecoration =
-        isCompleted ? TextDecoration.lineThrough : TextDecoration.none;
-    final fontWeight = isCompleted ? FontWeight.normal : FontWeight.bold;
-    final double opacityValue = isCompleted ? 0.1 : 0.3;
+        todo.isCompleted ? TextDecoration.lineThrough : TextDecoration.none;
+    final fontWeight = todo.isCompleted ? FontWeight.normal : FontWeight.bold;
+    final double opacityValue = todo.isCompleted ? 0.1 : 0.7;
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, top: 10, bottom: 10),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: category.color.withAlpha((opacityValue * 255).toInt()),
-            ),
-            child: Center(
-              child: Icon(
-                category.icon,
-                color: category.color.withAlpha(((opacityValue + 0.5) * 255).toInt()),
-              ),
+          CircularContainer(
+            color: todo.category.color.withAlpha((opacityValue * 255).toInt()),
+            child: Icon(
+              todo.category.icon,
+              color: colors.primary.withAlpha((opacityValue * 255).toInt()),
             ),
           ),
           const Gap(16),
@@ -51,7 +38,7 @@ class TodoTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  todo.title,
                   style: style.titleMedium?.copyWith(
                     fontWeight: fontWeight,
                     fontSize: 20,
@@ -59,7 +46,7 @@ class TodoTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  time,
+                  todo.time,
                   style: style.titleMedium?.copyWith(
                     decoration: textDecoration,
                   ),
@@ -68,12 +55,13 @@ class TodoTile extends StatelessWidget {
             ),
           ),
           Checkbox(
-            value: isCompleted,
+            value: todo.isCompleted,
             onChanged: onCompleted,
             checkColor: colors.surface,
-            fillColor: WidgetStateProperty.resolveWith<Color>(
-              (Set<WidgetState> states) {
-                return colors.primary;
+            fillColor: WidgetStateProperty.resolveWith<Color>((
+              Set<WidgetState> states,
+            ) {
+              return colors.primary;
             }),
           ),
         ],

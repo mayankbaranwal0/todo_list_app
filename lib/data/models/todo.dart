@@ -49,4 +49,24 @@ class Todo extends Equatable {
   List<Object> get props {
     return [title, note, category, time, date, isCompleted];
   }
+
+  Todo copyWith({
+    int? id,
+    String? title,
+    String? note,
+    TodoCategory? category,
+    String? time,
+    String? date,
+    bool? isCompleted,
+  }) {
+    return Todo(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      note: note ?? this.note,
+      category: category ?? this.category,
+      time: time ?? this.time,
+      date: date ?? this.date,
+      isCompleted: isCompleted ?? this.isCompleted,
+    );
+  }
 }

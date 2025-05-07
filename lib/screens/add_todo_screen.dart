@@ -98,10 +98,10 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
 
       await ref.read(addTodoProvider(todo).future);
       if (!mounted) return;
-      Helpers.displaySnackbar(context, 'To-Do added successfully');
+      AppAlerts.displaySnackbar(context, 'To-Do added successfully');
       context.go(RouteLocation.home);
     } else {
-      Helpers.displaySnackbar(context, 'Title cannot be empty');
+      AppAlerts.displaySnackbar(context, 'Title cannot be empty');
     }
   }
 }

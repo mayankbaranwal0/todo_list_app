@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
 class CircularContainer extends StatelessWidget {
-  const CircularContainer({super.key, this.child, required this.color});
+  const CircularContainer({
+    super.key,
+    this.child,
+    required this.color,
+    this.borderWidth,
+  });
 
   final Widget? child;
   final Color color;
+  final double? borderWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +19,7 @@ class CircularContainer extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color,
-        border: Border.all(width: 2, color: color),
+        border: Border.all(width: borderWidth ?? 2, color: color),
       ),
       child: Center(child: child),
     );

@@ -10,9 +10,11 @@ final completedTodosProvider = FutureProvider.autoDispose((ref) async {
   final allTodos = await repository.getAllTodos();
   final List<Todo> filteredTodo = [];
   for (var todo in allTodos) {
-    final isTodoDay = Helpers.isTodoFromSelectedDate(todo, date);
-    if (isTodoDay) {
-      filteredTodo.add(todo);
+    if (todo.isCompleted) {
+      final isTodoDay = Helpers.isTodoFromSelectedDate(todo, date);
+      if (isTodoDay) {
+        filteredTodo.add(todo);
+      }
     }
   }
 
